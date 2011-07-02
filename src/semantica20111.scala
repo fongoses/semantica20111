@@ -1,8 +1,10 @@
+
 abstract class Tipo
 	case class Inteiro() extends Tipo
 	case class Boleano() extends Tipo
 	case class Funcao(t1: Tipo, t2: Tipo) extends Tipo
 	case class Par(t1: Tipo, t2: Tipo) extends Tipo
+	//case class Tref()
 
 abstract class Expr
 	case class N (n:Int) extends Expr //Inteiro
@@ -23,6 +25,7 @@ abstract class Expr
 	case class LetRec (s:String, f: Funcao, e1: Expr, e2: Expr) extends Expr //Let recursivo
 	case class First (t: Par) extends Expr //Projecao #1
 	case class Last (t: Par) extends Expr //Projecao #2
+	
 
 	
 	
@@ -46,13 +49,25 @@ class L3Interpreter {
 
 		case Meq (e1, e2) =>(typecheck(e1,gamma),typecheck(e2,gamma)) match
 		{
-			case (Some(Inteiro()), Some(Inteiro())) => Some(Inteiro())
+			case (Some(Inteiro()), Some(Inteiro())) => Some(Boleano())
 			case _ => None 
 		}
 
-		/* 
-		case If (e1, e2, e3) =>
-		case Asg (e1, e2) =>
+		 
+		case If (e1, e2, e3) => (typecheck(e1,gamma)) match
+		{
+		  case (Some(Boleano())) => val returnValue : Option[Tipo] = typecheck(e2,gamma)
+				  					if(typecheck(e3,gamma)==returnValue)
+				  						returnValue
+				  					else
+				  					  None
+		  case _ => None	
+		}
+		  
+		  
+		  
+		//case Asg (e1, e2) =>
+/*
 		case Deref (e) =>
 		case Ref (e:Expr) =>
 		case Skip() =>
@@ -145,7 +160,8 @@ object L3
 	def main (args: Array[String]) 
 	{
 		// Expressao e memoria para teste
-		val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
+		//val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
+	    val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),If(B(true),N(5),B(false)))) //Expressao a ser avaliada
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
 		
