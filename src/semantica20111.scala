@@ -22,6 +22,7 @@ abstract class Expr
 	case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
 	case class X (s:String) extends Expr //Identificadores
 	case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
+	// Retirar
 	case class LetRec (s:String, f: Funcao, e1: Expr, e2: Expr) extends Expr //Let recursivo
 	case class First (t: Par) extends Expr //Projecao #1
 	case class Last (t: Par) extends Expr //Projecao #2
@@ -160,8 +161,8 @@ object L3
 	def main (args: Array[String]) 
 	{
 		// Expressao e memoria para teste
-		//val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
-	    val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),If(B(true),N(5),B(false)))) //Expressao a ser avaliada
+		val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
+//	    val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),If(B(true),N(5),B(false)))) //Expressao a ser avaliada
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
 		
@@ -178,7 +179,7 @@ object L3
 		
 		
 
-		//res match //caso o retorno seja um valor e uma memoria, imprime a informação
+		//res match //caso o retorno seja um valor e uma memoria, imprime a informaï¿½ï¿½o
 		//{
 		//	case Some((exp_final, sigma_final)) =>
 		//		println("Resultado da avaliacao de (5 + 10) + (10 + 100): " + exp_final)
