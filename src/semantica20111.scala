@@ -124,6 +124,74 @@ class L3Interpreter {
 										None
 				}  
 		
+		      // Tfn
+		case Fn (s:String, t: Tipo, e) => (typecheck(e, gamma)) match
+        {
+            case Some(tr: Tipo) =>
+                /* 
+                    Listas:
+                        val fruit: List[String] = List("apples", "oranges", "pears")
+                        ou
+                        val fruit = "apples" :: ("oranges" :: ("pears" :: Nil))
+                        ou
+                        val fruit = "apples" :: "oranges" :: "pears" :: Nil
+
+                    Fonte: http://www.scala-lang.org/docu/files/ScalaByExample.pdf página 64
+                */
+                val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma 
+                Some(Funcao(t, tr))
+            case _ =>
+                println("Erro: typecheck | Fn (s, t, e)")
+                None
+        }
+        
+        // Tapp
+		case App (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
+        {
+            case (Some(Funcao(tp: Tipo, tr: Tipo)), Some(te2: Tipo)) => 
+                if (tp == te2) { // Deve-se verificar de o tipo de e2 é o mesmo que o parâmetro de entrada da função e1
+                Some(tr) // Deve resultar no tipo de retorno de e1
+                } else {
+                    println("Erro: typecheck | App (Funcao(), e2)")
+                    None
+                }
+            case _ => 	
+                println("Erro: typecheck | App (Funcao(), e2)")
+                None
+        }
+        
+        // Tvar
+		/* 
+            .find: retorna uma instancia contendo o primeiro elemento encontrado que satisfaça a propriedade ou nenhum em caso contrário
+            Fonte: http://www.codecommit.com/blog/scala/scala-collections-for-the-easily-bored-part-3
+        */
+        //////////////////////////////////
+        // ATENÇÃO: Achar um substitutivo
+        // Coloquei aqui para podermos testar
+        //////////////////////////////////
+        case X (s: String) => (gamma.find(x => x._1 == s)) match 
+        {
+            case Some((s, t)) => Some(t)	// Se for encontrado um elemento da lista que satisfaça "s" retorna (s, tipo) então retorna tipo associado a "s"
+            case _ => 	
+                println("Erro: typecheck | X (s)") 
+                None
+        }
+        
+        // Tlet
+		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match {
+            case (Some(t1: Tipo), Some(te2: Tipo)) =>
+                if (t1 == t) { // O tipo de e1 deve ser igual a t
+                    val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma 
+                    Some(te2) // Deve retornar o tipo de e2
+                } else {
+                    println("Erro: typecheck | Let (s, t, Tipo(), Tipo())")
+                    None
+                }
+            case _ => 
+                println("Erro: typecheck | Let (s, t, e1, e2)") 
+                None
+        }
+		
 /*
 
 		
