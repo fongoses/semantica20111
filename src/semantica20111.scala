@@ -216,65 +216,13 @@ class L3Interpreter {
 		
 	}	
 	
-/*		
+	
 		
 	////////////////////////////////////////////////////////////////////////////////
     // Semantica Operacional
     ////////////////////////////////////////////////////////////////////////////////
 
-	def isvalue(e:Expr) : Boolean = e match 
-	{
-		case N(_) => true
-		case X(_) => true
-		case B(_) => true
-		case Fn(_,_,_) => true
-		case Skip() => true
-		case _ => false
-	}
 
-	
-	type Endereco = String
-	type Memoria = List[(Endereco,Int)]
-
-	def step(e: Expr, sigma: Memoria): Option[(Expr, Memoria)] = e match 
-	{
-		case N(_) => None
-		case B(_) => None
-		case Sum (e1, e2) => (e1,e2) match
-		{
-			case (N(n1),N(n2)) => Some ((N(n1 + n2), sigma))
-			case (e1, e2) => if (isvalue(e1)) 
-			{
-				step(e2,sigma) match 
-				{
-					case Some((e2lin, sigmalin)) =>	Some((Sum(e1,e2lin), sigmalin))
-					case None => None
-				}
-			} 
-			else 
-			{
-				step(e1, sigma) match 
-				{
-					case Some((e1lin, sigmalin)) =>Some((Sum(e1lin, e2), sigmalin))
-					case None => None
-				}
-			}
-		}
-		// case Prod (e1, e2) => ...
-		// case Dif (e1, e2) => ...
-		// case Eq (e1, e2) => ...
-		case If(B(true), e2, e3) => Some(e2, sigma)
-		case If(B(false), e2, e3) => Some(e3, sigma)
-		// case If(e1, e3, e3) => ....
-		// .....
-	}
-
-	def eval(e: Expr, sigma:Memoria): Option[(Expr, Memoria)] = step(e,sigma) match 
-	{
-		case None => Some((e,sigma))
-		case Some((elin, sigmalin)) => eval(elin, sigmalin)
-	}
-*/	
 }	
 
 
@@ -391,18 +339,6 @@ object L3
 		interpretador.testaTipos(Let("aString",Boleano(),N(20),N(10)),gamma)
 
 
-	
-
-		//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
-	    
-
-		
-
-		//res match //caso o retorno seja um valor e uma memoria, imprime a informa��o
-		//{
-		//	case Some((exp_final, sigma_final)) =>
-		//		println("Resultado da avaliacao de (5 + 10) + (10 + 100): " + exp_final)
-		//		println(sigma_final)
-		//}
+			
 	}
 }
