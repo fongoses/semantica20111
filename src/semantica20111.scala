@@ -62,7 +62,7 @@ class L3Interpreter {
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Inteiro())
 			case _ => 
-                println("Erro: typecheck | Sum (e1, e2)")
+                println("Erro: typecheck | Sum (e1, e2) => e1 e e2 devem ser do tipo inteiro")
 				None
 		}
 		
@@ -71,7 +71,7 @@ class L3Interpreter {
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Boleano())
 			case _ =>
-                println("Erro: typecheck | Meq (e1, e2)")
+                println("Erro: typecheck | Meq (e1, e2) => e1 e e2 devem ser do tipo inteiro")
                 None 
 		}
 
@@ -83,10 +83,10 @@ class L3Interpreter {
 		    	if(typecheck(e3,gamma)==returnValue)
 		    		returnValue
 				else
-                    println("Erro: typecheck | If (Booleano(), e2, e3)")
+                    println("Erro: typecheck | If (e1:Booleano(), e2, e3) => e2 e e3 nao sao do mesmo tipo")
                     None					
 		  case _ => 	
-                println("Erro: typecheck | If (e1, e2, e3)")
+                println("Erro: typecheck | If (e1, e2, e3) => e1 nao eh do tipo booleano")
                 None
 		}
 		  
@@ -106,10 +106,10 @@ class L3Interpreter {
 				if(Some(t) == typecheck(e2,gamma))
 					Some(Unidade())
 				else
-					println("Erro: typecheck | Asg(Ref(), e2)")
+					println("Erro: typecheck | Asg(e1:Ref(), e2) => o tipo referenciado por e1 nao eh do tipo de e2 ")
                     None
 			case _ => 
-                println("Erro: typecheck | Asg (e1, e2)")
+                println("Erro: typecheck | Asg (e1, e2) => e1 nao eh do tipo Referencia(t)")
                 None
 		}
 
@@ -118,7 +118,7 @@ class L3Interpreter {
 		{
 		  case(Some(Referencia(t: Tipo))) => Some(t)
 		  case _ => 
-                println("Erro: typecheck | Deref (e)")
+                println("Erro: typecheck | Deref (e) => e nao eh do tipo Referencia(t)")
                 None
 		}
 
@@ -128,7 +128,7 @@ class L3Interpreter {
 		{
 			case (Some(Unidade()), Some(t:Tipo)) => Some(t)
 			case _ => 					
-                    println("Erro: typecheck | Seq (e1, e2)")
+                    println("Erro: typecheck | Seq (e1, e2) => e1 nao eh do tipo unidade")
                     None				
 		}
 		
@@ -138,10 +138,10 @@ class L3Interpreter {
             case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
             case _ =>
                 if (e1 != Boleano()) {
-                    println("Erro: typecheck | W (e1, e2)")
+                    println("Erro: typecheck | W (e1, e2) => e1 nao eh do tipo booleano")
                     None
                 } else {
-                    println("Erro: typecheck | W (Boleano(), e2)")
+                    println("Erro: typecheck | W (e1:Boleano(), e2) => e2 nao eh do tipo unidade")
                     None
                 }
         }
@@ -174,11 +174,11 @@ class L3Interpreter {
                 if (tp == te2) { // Deve-se verificar de o tipo de e2 eh o mesmo que o parametro de entrada da funcao e1
                 Some(tr) // Deve resultar no tipo de retorno de e1
                 } else {
-                    println("Erro: typecheck | App (Funcao(), e2)")
+                    println("Erro: typecheck | App (e1:Funcao(), e2) => o tipo de e2 nao eh do mesmo tipo do parametro de entrada da funcao e1")
                     None
                 }
             case _ => 	
-                println("Erro: typecheck | App (Funcao(), e2)")
+                println("Erro: typecheck | App (e1, e2) => e1 nao eh uma funcao")
                 None
         }
         
@@ -195,7 +195,7 @@ class L3Interpreter {
         {
             case Some((s, t)) => Some(t)	// Se for encontrado um elemento da lista que satisfaça "s" retorna (s, tipo) então retorna tipo associado a "s"
             case _ => 	
-                println("Erro: typecheck | X (s)") 
+                println("Erro: typecheck | X (s) => s nao foi encontrado em gamma (lista de [identificador, tipo])") 
                 None
         }
         
@@ -206,7 +206,7 @@ class L3Interpreter {
                     val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma 
                     Some(te2) // Deve retornar o tipo de e2
                 } else {
-                    println("Erro: typecheck | Let (s, t, Tipo(), Tipo())")
+                    println("Erro: typecheck | Let (s, t, e1: Tipo(), e2) => e1 nao eh do mesmo tipo de t")
                     None
                 }
             case _ => 
@@ -215,13 +215,6 @@ class L3Interpreter {
         }
 		
 	}	
-	
-	
-		
-	////////////////////////////////////////////////////////////////////////////////
-    // Semantica Operacional
-    ////////////////////////////////////////////////////////////////////////////////
-
 
 }	
 
@@ -338,7 +331,11 @@ object L3
 		interpretador.testaTipos(Let("aString",Boleano(),B(true),N(10)),gamma)
 		interpretador.testaTipos(Let("aString",Boleano(),N(20),N(10)),gamma)
 
-
+		println("\n========================================")
+		println("Testes Combinados")
+		println("========================================\n")
+		interpretador.testaTipos(Let("k",Boleano(),B(true),Let("u",Inteiro(),N(20),W(B(true),Skip()))),gamma)
+		interpretador.testaTipos(Let("u",Boleano(),B(true),Let("v",Inteiro(),N(20),X("v"))),gamma)
 			
 	}
 }
