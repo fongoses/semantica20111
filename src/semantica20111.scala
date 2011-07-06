@@ -38,6 +38,7 @@ class L3Interpreter {
 	{
 		case N (_) => Some(Inteiro())
 		case B (_) => Some(Boleano())
+		case Skip() => Some(Unidade())	
 		
 		case Sum (e1, e2) =>(typecheck(e1,gamma), typecheck(e2,gamma)) match 
 		{
@@ -77,6 +78,20 @@ class L3Interpreter {
 												  None
 			case _ => None
 		}
+		
+				case Seq (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
+						case (Some(Unidade()), Some(t:Tipo)) => Some(t)
+						case _ => 	None				
+				}
+			
+		case W (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
+						case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
+						case _ => 	if(e1 == Boleano())
+										None
+									else 
+										None
+				}  
+		
 /*
 		case Deref (e) =>
 		
@@ -187,6 +202,23 @@ object L3
 
 		println("Tipo: " + tipo) //Imprime o resultado da avaliacao de tipos
 		
+		println()
+		println("Testes para Seq(e1, e2)")
+			
+
+		val ex1:Expr = Seq(Skip(), Sum(N(1), N(35)) )
+		val tipo1 = interpretador.typecheck(ex1,gamma)
+		println()		
+		println("Expressao 1: " + ex1)
+		println()
+		println("Tipo: " + tipo1)
+
+		val ex2:Expr = Seq(Skip(), B(true))
+		val tipo2 = interpretador.typecheck(ex2,gamma)
+		println()		
+		println("Expressao 2: " + ex2)
+		println()
+		println("Tipo: " + tipo2)
 		
 
 		//res match //caso o retorno seja um valor e uma memoria, imprime a informa��o
