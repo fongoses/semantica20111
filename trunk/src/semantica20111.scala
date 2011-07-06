@@ -4,7 +4,7 @@ abstract class Tipo
 	case class Boleano() extends Tipo
 	case class Unidade() extends Tipo
 	case class Funcao(t1: Tipo, t2: Tipo) extends Tipo
-	case class Referencia(t1: Tipo) extends Tipo
+	case class Referencia(t: Tipo) extends Tipo
 
 abstract class Expr
 	case class N (n:Int) extends Expr //Inteiro
@@ -63,20 +63,19 @@ class L3Interpreter {
 		  case _ => None	
 		}
 		  
-		case Ref (e:Expr) => (typecheck(e,gamma)) match
+		case Ref (e) => (typecheck(e,gamma)) match
 		{
-		  case (Some(Referencia(t: tipo))) => Some(Referencia(t))
-		  case _ => None
+			case (Some(t: Tipo)) => Some(Referencia(t))
+			case _ => None
 		}
 		  
 		case Asg (e1, e2) => (typecheck(e1,gamma)) match
 		{
-		  case (Some(Referencia(e3: Tipo))) => val refType : Option[Tipo] = typecheck(e3,gamma)
-				  						if(typecheck(e2,gamma) == refType)
-				  							return refType
-				  						else
-				  						  None
-		  
+			case (Some(Referencia(t: Tipo))) => if(Some(t) == typecheck(e2,gamma))
+													Some(Unidade())
+												else
+												  None
+			case _ => None
 		}
 /*
 		case Deref (e) =>
@@ -171,8 +170,9 @@ object L3
 	def main (args: Array[String]) 
 	{
 		// Expressao e memoria para teste
-		val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
-	  //  val ex:Expr = Asg(Ref(Boleano()), Boleano()) //Expressao a ser avaliada
+		//val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
+	    val ex:Expr = Asg(Ref(N(10)),N(12)) //Expressao a ser avaliada
+//	    val ex:Expr = N(10) //Expressao a ser avaliada
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
 		
