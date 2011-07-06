@@ -138,13 +138,8 @@ class L3Interpreter {
         {
             case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
             case _ =>
-                if (e1 != Boleano()) {
-                    println("Erro: typecheck | W (e1, e2) => e1 nao eh do tipo booleano")
-                    None
-                } else {
-                    println("Erro: typecheck | W (e1:Boleano(), e2) => e2 nao eh do tipo unidade")
-                    None
-                }
+                println("Erro: typecheck | W (e1, e2) => e1 nao eh do tipo booleano ou e2 nao eh do tipo unidade")
+                None
         }
 		
 		// Funcoes
