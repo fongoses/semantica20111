@@ -32,6 +32,19 @@ abstract class Expr
 	
 	
 class L3Interpreter {
+  
+  
+    def testaTipos(e:Expr, gamma: List[(String,Tipo)])
+    {
+      
+    	val interpretador = new L3Interpreter()
+		println()		
+		println("Expressao: " + e)
+		println()
+		println("Tipo: " + interpretador.typecheck(e,gamma))
+		println("--------------------------------------")
+            
+    }
 
 	// Verificador de Tipos
 	def typecheck(e:Expr, gamma: List[(String,Tipo)]) : Option[Tipo] = e match 
@@ -41,6 +54,9 @@ class L3Interpreter {
 		
 		//Booleanos
 		case B (_) => Some(Boleano()) 
+		
+		//Skip
+		case Skip() => Some(Unidade())	
 		
 		//Soma
 		case Sum (e1, e2) =>(typecheck(e1,gamma), typecheck(e2,gamma)) match 
@@ -92,8 +108,24 @@ class L3Interpreter {
 		}
 
 		
-		/*
+		//Sequencia
+		case Seq (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match 
+		{
+			case (Some(Unidade()), Some(t:Tipo)) => Some(t)
+			case _ => 	None				
+		}
 		
+		//While
+		case W (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
+						case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
+						case _ => 	if(e1 == Boleano())
+										None
+									else 
+										None
+				}  
+		
+/*
+
 		
 		case Skip() =>
 		case Seq (e1, e2) =>
@@ -184,25 +216,58 @@ object L3
 {
 	def main (args: Array[String]) 
 	{
-		// Expressao e memoria para teste
-		//val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
-//	    val ex:Expr = Asg(Ref(N(10)),N(12)) //Expressao a ser avaliada
-//	    val ex:Expr = N(10) //Expressao a ser avaliada
-		val ex:Expr = Deref(Ref(Skip()))
+
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
-		
 		val interpretador = new L3Interpreter()
 
-		val tipo = interpretador.typecheck(ex,gamma) //Comando para rodar a verificacao de tipos
-		//val res = interpretador.eval(ex,sigma) //Comando para executar a parte semantica
-		println()
-//		println("Expressao L3: " + ex) //Imprime a expressao informada
-		println()
+
+		
+		println("========================================")
+		println("Testes para Sum (e1, e2)")
+		println("========================================")
+		interpretador.testaTipos((Sum(N(10),Sum(N(80),N(5)))),gamma)
+		interpretador.testaTipos((Sum(N(10),Sum(N(15),B(true)))),gamma)
+		
+		println("========================================")
+		println("Testes para Meq (e1, e2)")
+		println("========================================")
+		interpretador.testaTipos((Sum(N(10),Sum(N(80),N(5)))),gamma)
+		interpretador.testaTipos((Sum(N(10),Sum(N(15),B(true)))),gamma)
+
+		println("========================================")
+		println("Testes para If (e1, e2, e3)")
+		println("========================================")
+		interpretador.testaTipos((If(B(true),N(10),Sum(N(15),N(20)))),gamma)
+		interpretador.testaTipos(If(B(false),N(10),B(true)),gamma)
+		
+		println("========================================")
+		println("Testes para Asg(e1, e2)")
+		println("========================================")
+		interpretador.testaTipos((Asg(Ref(B(true)),B(false))),gamma)
+		interpretador.testaTipos((Asg(Ref(B(true)),N(10))),gamma)		
+		
+		println("========================================")
+		println("Testes para Seq(e1, e2)")
+		println("========================================")
+		interpretador.testaTipos((Seq(Skip(), Sum(N(1), N(35)))),gamma)
+		interpretador.testaTipos((Seq(Skip(), B(true))),gamma)
+		
 		
 
-		println("Tipo: " + tipo) //Imprime o resultado da avaliacao de tipos
-		
+
+
+	//case class Deref (e: Expr) extends Expr //Deref
+	//case class Ref (e:Expr) extends Expr //Ref
+	//case class Skip() extends Expr //Skip
+	//case class Seq (e1: Expr, e2: Expr) extends Expr //Sequencia
+	//case class W (e1: Expr, e2: Expr) extends Expr //While
+	//case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
+	//case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
+	//case class X (s:String) extends Expr //Identificadores
+	//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
+	    
+
 		
 
 		//res match //caso o retorno seja um valor e uma memoria, imprime a informa��o
