@@ -123,7 +123,7 @@ class L3Interpreter {
                     None
                 }
         }
-		      // Tfn
+		      // Funcoes
 		case Fn (s:String, t: Tipo, e) => (typecheck(e, gamma)) match
         {
             case Some(tr: Tipo) =>
@@ -144,7 +144,7 @@ class L3Interpreter {
                 None
         }
         
-        // Tapp
+        // Aplicacao
 		case App (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
         {
             case (Some(Funcao(tp: Tipo, tr: Tipo)), Some(te2: Tipo)) => 
@@ -159,7 +159,7 @@ class L3Interpreter {
                 None
         }
         
-        // Tvar
+        // Identificadores
 		/* 
             .find: retorna uma instancia contendo o primeiro elemento encontrado que satisfaça a propriedade ou nenhum em caso contrário
             Fonte: http://www.codecommit.com/blog/scala/scala-collections-for-the-easily-bored-part-3
@@ -176,7 +176,7 @@ class L3Interpreter {
                 None
         }
         
-        // Tlet
+        // Let
 		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match {
             case (Some(t1: Tipo), Some(te2: Tipo)) =>
                 if (t1 == t) { // O tipo de e1 deve ser igual a t
@@ -354,10 +354,10 @@ object L3
 
 
 
-	//case class W (e1: Expr, e2: Expr) extends Expr //While
+
+
 	//case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
 	//case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
-	//case class X (s:String) extends Expr //Identificadores
 	//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
 	    
 
