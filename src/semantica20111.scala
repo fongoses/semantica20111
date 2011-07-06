@@ -2,9 +2,9 @@
 abstract class Tipo
 	case class Inteiro() extends Tipo
 	case class Boleano() extends Tipo
+	case class Unidade() extends Tipo
 	case class Funcao(t1: Tipo, t2: Tipo) extends Tipo
-	case class Par(t1: Tipo, t2: Tipo) extends Tipo
-	//case class Tref()
+	case class Referencia(t1: Tipo) extends Tipo
 
 abstract class Expr
 	case class N (n:Int) extends Expr //Inteiro
@@ -23,9 +23,7 @@ abstract class Expr
 	case class X (s:String) extends Expr //Identificadores
 	case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
 	// Retirar
-	case class LetRec (s:String, f: Funcao, e1: Expr, e2: Expr) extends Expr //Let recursivo
-	case class First (t: Par) extends Expr //Projecao #1
-	case class Last (t: Par) extends Expr //Projecao #2
+	
 	
 
 	
@@ -65,12 +63,24 @@ class L3Interpreter {
 		  case _ => None	
 		}
 		  
+		case Ref (e:Expr) => (typecheck(e,gamma)) match
+		{
+		  case (Some(Referencia(t: tipo))) => Some(Referencia(t))
+		  case _ => None
+		}
 		  
+		case Asg (e1, e2) => (typecheck(e1,gamma)) match
+		{
+		  case (Some(Referencia(e3: Tipo))) => val refType : Option[Tipo] = typecheck(e3,gamma)
+				  						if(typecheck(e2,gamma) == refType)
+				  							return refType
+				  						else
+				  						  None
 		  
-		//case Asg (e1, e2) =>
+		}
 /*
 		case Deref (e) =>
-		case Ref (e:Expr) =>
+		
 		case Skip() =>
 		case Seq (e1, e2) =>
 		case W (e1, e2) =>
@@ -162,7 +172,7 @@ object L3
 	{
 		// Expressao e memoria para teste
 		val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
-//	    val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),If(B(true),N(5),B(false)))) //Expressao a ser avaliada
+	  //  val ex:Expr = Asg(Ref(Boleano()), Boleano()) //Expressao a ser avaliada
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
 		
