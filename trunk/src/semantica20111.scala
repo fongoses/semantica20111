@@ -110,15 +110,19 @@ class L3Interpreter {
 			case _ => 	None				
 		}
 		
-		//While
-		case W (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
-						case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
-						case _ => 	if(e1 == Boleano())
-										None
-									else 
-										None
-				}  
-		
+        // Twhile
+		case W (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
+        {
+            case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
+            case _ =>
+                if (e1 != Boleano()) {
+                    println("Erro: typecheck | W (e1, e2)")
+                    None
+                } else {
+                    println("Erro: typecheck | W (Booelano(), e2)")
+                    None
+                }
+        }
 		      // Tfn
 		case Fn (s:String, t: Tipo, e) => (typecheck(e, gamma)) match
         {
