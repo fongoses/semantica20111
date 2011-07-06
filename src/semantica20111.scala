@@ -370,15 +370,22 @@ object L3
 		interpretador.testaTipos((Fn("x",Boleano(),Skip())),gamma)
 		interpretador.testaTipos((Fn("x",Inteiro(),X("k"))),gamma)
 
+		println("========================================")
+		println("Testes para App(e1,e2)")
+		println("========================================")
+		interpretador.testaTipos(App(Fn("teste",Boleano(),N(10)),B(true)),gamma)
+		interpretador.testaTipos(App(Fn("teste",Boleano(),Fn("var",Inteiro(),N(10))),B(true)),gamma)
+
+		println("========================================")
+		println("Testes para App(s,t,e1,e2)")
+		println("========================================")
+		interpretador.testaTipos(Let("aString",Boleano(),B(true),N(10)),gamma)
+		interpretador.testaTipos(Let("aString",Boleano(),N(20),N(10)),gamma)
 
 
+	
 
-
-	//case class W (e1: Expr, e2: Expr) extends Expr //While
-	//case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
-	//case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
-	//case class X (s:String) extends Expr //Identificadores
-	//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
+		//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
 	    
 
 		
