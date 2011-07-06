@@ -22,11 +22,6 @@ abstract class Expr
 	case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
 	case class X (s:String) extends Expr //Identificadores
 	case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
-	// Retirar
-	
-	
-
-	
 	
 
 	
@@ -313,7 +308,24 @@ object L3
 		println("Testes para Asg(e1, e2)")
 		println("========================================")
 		interpretador.testaTipos((Asg(Ref(B(true)),B(false))),gamma)
-		interpretador.testaTipos((Asg(Ref(B(true)),N(10))),gamma)		
+		interpretador.testaTipos((Asg(Ref(B(true)),N(10))),gamma)
+		
+		println("========================================")
+		println("Testes para Deref(e)")
+		println("========================================")
+		interpretador.testaTipos((Deref(Ref(N(10)))),gamma)
+		interpretador.testaTipos((Deref(N(10))),gamma)	
+		
+		println("========================================")
+		println("Testes para Ref(e)")
+		println("========================================")
+		interpretador.testaTipos((Ref(Sum(N(10),N(20)))),gamma)
+		interpretador.testaTipos((Ref(B(true))),gamma)
+		
+		println("========================================")
+		println("Testes para Skip()")
+		println("========================================")
+		interpretador.testaTipos(Skip(),gamma)
 		
 		println("========================================")
 		println("Testes para Seq(e1, e2)")
@@ -325,10 +337,8 @@ object L3
 
 
 
-	//case class Deref (e: Expr) extends Expr //Deref
-	//case class Ref (e:Expr) extends Expr //Ref
-	//case class Skip() extends Expr //Skip
-	//case class Seq (e1: Expr, e2: Expr) extends Expr //Sequencia
+
+
 	//case class W (e1: Expr, e2: Expr) extends Expr //While
 	//case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
 	//case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
