@@ -35,9 +35,9 @@ class L3Interpreter {
     {
       
     	val interpretador = new L3Interpreter()
-		println()		
+		//println()		
 		println("Expressao: " + e)
-		println()
+		//println()
 		println("Tipo: " + interpretador.typecheck(e,gamma))
 		println("--------------------------------------")
             
@@ -291,8 +291,10 @@ object L3
         // Memoria (sigma) e Ambiente (gamma)
         ////////////////////////////////////////////////////////////////////////////////
 		//val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
+        //println("Sigma: " + sigma)
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
-        println("Memoria e Ambiente prontos.")
+        println("Gamma: " + gamma)
+        println("Memoria e Ambiente prontos.\n")
         ////////////////////////////////////////////////////////////////////////////////
 
 		
@@ -300,7 +302,7 @@ object L3
         // Carrega o interpretador
         ////////////////////////////////////////////////////////////////////////////////
 		val interpretador = new L3Interpreter()
-        println("Interpretador Carregado.\n\n")
+        println("Interpretador Carregado.\n")
         ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -308,83 +310,83 @@ object L3
         // Fazendo as Verificacoes
         ////////////////////////////////////////////////////////////////////////////////
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Sum (e1, e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Sum(N(10),Sum(N(80),N(5)))),gamma)
 		interpretador.testaTipos((Sum(N(10),Sum(N(15),B(true)))),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Meq (e1, e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Sum(N(10),Sum(N(80),N(5)))),gamma)
 		interpretador.testaTipos((Sum(N(10),Sum(N(15),B(true)))),gamma)
 
-		println("========================================")
+		println("\n========================================")
 		println("Testes para If (e1, e2, e3)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((If(B(true),N(10),Sum(N(15),N(20)))),gamma)
 		interpretador.testaTipos(If(B(false),N(10),B(true)),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Asg(e1, e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Asg(Ref(B(true)),B(false))),gamma)
 		interpretador.testaTipos((Asg(Ref(B(true)),N(10))),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Deref(e)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Deref(Ref(N(10)))),gamma)
 		interpretador.testaTipos((Deref(N(10))),gamma)	
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Ref(e)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Ref(Sum(N(10),N(20)))),gamma)
 		interpretador.testaTipos((Ref(B(true))),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Skip()")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos(Skip(),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Seq(e1, e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Seq(Skip(), Sum(N(1), N(35)))),gamma)
 		interpretador.testaTipos((Seq(Skip(), B(true))),gamma)
 		
-		println("========================================")
+		println("\n========================================")
 		println("Testes para W(e1, e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((W(B(true), N(0))),gamma)
 		interpretador.testaTipos((W(B(false), Sum(N(7),N(9)))),gamma)	
 		interpretador.testaTipos((W(N(27), B(false))),gamma)
 		interpretador.testaTipos((W(B(true),Skip())),gamma)
 
-		println("========================================")
+		println("\n========================================")
 		println("Testes para X(x)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((X("x")),gamma)
 		interpretador.testaTipos((X("y")),gamma)
 		interpretador.testaTipos((X("z")),gamma)
 
-		println("========================================")
+		println("\n========================================")
 		println("Testes para Fn(s,t,e)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos((Fn("x",Boleano(),Skip())),gamma)
 		interpretador.testaTipos((Fn("x",Inteiro(),X("k"))),gamma)
 
-		println("========================================")
+		println("\n========================================")
 		println("Testes para App(e1,e2)")
-		println("========================================")
+		println("========================================\n")
 		interpretador.testaTipos(App(Fn("teste",Boleano(),N(10)),B(true)),gamma)
 		interpretador.testaTipos(App(Fn("teste",Boleano(),Fn("var",Inteiro(),N(10))),B(true)),gamma)
 
-		println("========================================")
-		println("Testes para App(s,t,e1,e2)")
-		println("========================================")
+		println("\n========================================")
+		println("Testes para Let(s,t,e1,e2)")
+		println("========================================\n")
 		interpretador.testaTipos(Let("aString",Boleano(),B(true),N(10)),gamma)
 		interpretador.testaTipos(Let("aString",Boleano(),N(20),N(10)),gamma)
 
