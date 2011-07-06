@@ -61,49 +61,65 @@ class L3Interpreter {
 		case Sum (e1, e2) =>(typecheck(e1,gamma), typecheck(e2,gamma)) match 
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Inteiro())
-			case _ => None
+			case _ => 
+                println("Erro: typecheck | Sum (e1, e2)")
+				None
 		}
 		
 		//Maior ou Igual
 		case Meq (e1, e2) =>(typecheck(e1,gamma),typecheck(e2,gamma)) match
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Boleano())
-			case _ => None 
+			case _ =>
+                println("Erro: typecheck | Meq (e1, e2)")
+                None 
 		}
 
 		//If then else 
 		case If (e1, e2, e3) => (typecheck(e1,gamma)) match
 		{
-		  case (Some(Boleano())) => val returnValue : Option[Tipo] = typecheck(e2,gamma)
-				  					if(typecheck(e3,gamma)==returnValue)
-				  						returnValue
-				  					else
-				  					  None
-		  case _ => None	
+		  case (Some(Boleano())) => 
+		    val returnValue : Option[Tipo] = typecheck(e2,gamma)
+		    	if(typecheck(e3,gamma)==returnValue)
+		    		returnValue
+				else
+                    println("Erro: typecheck | If (Booleano(), e2, e3)")
+                    None					
+		  case _ => 	
+                println("Erro: typecheck | If (e1, e2, e3)")
+                None
 		}
 		  
 		//Ref
 		case Ref (e) => (typecheck(e,gamma)) match
 		{
 			case (Some(t: Tipo)) => Some(Referencia(t))
-			case _ => None
+			case _ => 
+                println("Erro: typecheck | Ref (e)")
+                None
 		}
 		
 		//Atribuicao
 		case Asg (e1, e2) => (typecheck(e1,gamma)) match
 		{
-			case (Some(Referencia(t: Tipo))) => if(Some(t) == typecheck(e2,gamma))
-													Some(Unidade())
-												else
-												  None
-			case _ => None
+			case (Some(Referencia(t: Tipo))) => 
+				if(Some(t) == typecheck(e2,gamma))
+					Some(Unidade())
+				else
+					println("Erro: typecheck | Asg(Ref(), e2)")
+                    None
+			case _ => 
+                println("Erro: typecheck | Asg (e1, e2)")
+                None
 		}
 
 		//Deref
 		case Deref (e) => (typecheck(e,gamma)) match
 		{
 		  case(Some(Referencia(t: Tipo))) => Some(t)
-		  case _ => None
+		  case _ => 
+                println("Erro: typecheck | Deref (e)")
+                None
 		}
 
 		
@@ -111,7 +127,9 @@ class L3Interpreter {
 		case Seq (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match 
 		{
 			case (Some(Unidade()), Some(t:Tipo)) => Some(t)
-			case _ => 	None				
+			case _ => 					
+                    println("Erro: typecheck | Seq (e1, e2)")
+                    None				
 		}
 		
         // While
@@ -149,11 +167,11 @@ class L3Interpreter {
                 None
         }
         
-        // Aplica��o
+        // Aplicacao
 		case App (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
         {
             case (Some(Funcao(tp: Tipo, tr: Tipo)), Some(te2: Tipo)) => 
-                if (tp == te2) { // Deve-se verificar de o tipo de e2 é o mesmo que o parâmetro de entrada da função e1
+                if (tp == te2) { // Deve-se verificar de o tipo de e2 eh o mesmo que o parametro de entrada da funcao e1
                 Some(tr) // Deve resultar no tipo de retorno de e1
                 } else {
                     println("Erro: typecheck | App (Funcao(), e2)")
@@ -196,18 +214,6 @@ class L3Interpreter {
                 None
         }
 		
-/*
-
-		
-		case Skip() =>
-		case Seq (e1, e2) =>
-		case W (e1, e2) =>
-		case Fn (s:String, t: Tipo, e) =>
-		case App (e1, e2) =>
-		case X (s:String) =>
-		case Let (s:String, t: Tipo, e1, e2) =>
-		case LetRec (f: Tipo, e1, e2) =>
-		*/
 	}	
 	
 /*		
