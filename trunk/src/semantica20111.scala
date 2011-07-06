@@ -36,24 +36,27 @@ class L3Interpreter {
 	// Verificador de Tipos
 	def typecheck(e:Expr, gamma: List[(String,Tipo)]) : Option[Tipo] = e match 
 	{
-		case N (_) => Some(Inteiro())
-		case B (_) => Some(Boleano())
-		case Skip() => Some(Unidade())	
+		//Inteiros
+		case N (_) => Some(Inteiro()) 
 		
+		//Booleanos
+		case B (_) => Some(Boleano()) 
+		
+		//Soma
 		case Sum (e1, e2) =>(typecheck(e1,gamma), typecheck(e2,gamma)) match 
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Inteiro())
 			case _ => None
 		}
 		
-
+		//Maior ou Igual
 		case Meq (e1, e2) =>(typecheck(e1,gamma),typecheck(e2,gamma)) match
 		{
 			case (Some(Inteiro()), Some(Inteiro())) => Some(Boleano())
 			case _ => None 
 		}
 
-		 
+		//If then else 
 		case If (e1, e2, e3) => (typecheck(e1,gamma)) match
 		{
 		  case (Some(Boleano())) => val returnValue : Option[Tipo] = typecheck(e2,gamma)
@@ -64,12 +67,14 @@ class L3Interpreter {
 		  case _ => None	
 		}
 		  
+		//Ref
 		case Ref (e) => (typecheck(e,gamma)) match
 		{
 			case (Some(t: Tipo)) => Some(Referencia(t))
 			case _ => None
 		}
-		  
+		
+		//Atribuicao
 		case Asg (e1, e2) => (typecheck(e1,gamma)) match
 		{
 			case (Some(Referencia(t: Tipo))) => if(Some(t) == typecheck(e2,gamma))
@@ -78,22 +83,17 @@ class L3Interpreter {
 												  None
 			case _ => None
 		}
+
+		//Deref
+		case Deref (e) => (typecheck(e,gamma)) match
+		{
+		  case(Some(Referencia(t: Tipo))) => Some(t)
+		  case _ => None
+		}
+
 		
-				case Seq (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
-						case (Some(Unidade()), Some(t:Tipo)) => Some(t)
-						case _ => 	None				
-				}
-			
-		case W (e1, e2) =>	(typecheck(e1,gamma), typecheck(e2,gamma)) match {
-						case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
-						case _ => 	if(e1 == Boleano())
-										None
-									else 
-										None
-				}  
+		/*
 		
-/*
-		case Deref (e) =>
 		
 		case Skip() =>
 		case Seq (e1, e2) =>
@@ -186,8 +186,9 @@ object L3
 	{
 		// Expressao e memoria para teste
 		//val ex:Expr = Sum(Sum(N(5),N(10)), Sum(N(10),N(100))) //Expressao a ser avaliada
-	    val ex:Expr = Asg(Ref(N(10)),N(12)) //Expressao a ser avaliada
+//	    val ex:Expr = Asg(Ref(N(10)),N(12)) //Expressao a ser avaliada
 //	    val ex:Expr = N(10) //Expressao a ser avaliada
+		val ex:Expr = Deref(Ref(Skip()))
 //		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
 		
@@ -202,23 +203,6 @@ object L3
 
 		println("Tipo: " + tipo) //Imprime o resultado da avaliacao de tipos
 		
-		println()
-		println("Testes para Seq(e1, e2)")
-			
-
-		val ex1:Expr = Seq(Skip(), Sum(N(1), N(35)) )
-		val tipo1 = interpretador.typecheck(ex1,gamma)
-		println()		
-		println("Expressao 1: " + ex1)
-		println()
-		println("Tipo: " + tipo1)
-
-		val ex2:Expr = Seq(Skip(), B(true))
-		val tipo2 = interpretador.typecheck(ex2,gamma)
-		println()		
-		println("Expressao 2: " + ex2)
-		println()
-		println("Tipo: " + tipo2)
 		
 
 		//res match //caso o retorno seja um valor e uma memoria, imprime a informa��o
