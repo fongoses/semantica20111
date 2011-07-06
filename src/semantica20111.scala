@@ -147,7 +147,7 @@ class L3Interpreter {
         }
 		
 		// Funcoes
-		case Fn (s:String, t: Tipo, e) => (typecheck(e, gamma)) match
+		case Fn (s:String, t: Tipo, e) => (typecheck(e, (s, t) :: gamma)) match // Adiciona s, t ao ambiente gamma
         {
             case Some(tr: Tipo) =>
                 /* 
@@ -160,7 +160,7 @@ class L3Interpreter {
 
                     Fonte: http://www.scala-lang.org/docu/files/ScalaByExample.pdf página 64
                 */
-                val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma 
+                //val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma
                 Some(Funcao(t, tr))
             case _ =>
                 println("Erro: typecheck | Fn (s, t, e)")
@@ -200,10 +200,10 @@ class L3Interpreter {
         }
         
         // Let
-		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match {
+		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, (s, t) :: gamma)) match { // Adiciona s, t ao ambiente gamma de e2
             case (Some(t1: Tipo), Some(te2: Tipo)) =>
                 if (t1 == t) { // O tipo de e1 deve ser igual a t
-                    val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma 
+                    //val add_gamma = (s, t) :: gamma  
                     Some(te2) // Deve retornar o tipo de e2
                 } else {
                     println("Erro: typecheck | Let (s, t, e1: Tipo(), e2) => e1 nao eh do mesmo tipo de t")
@@ -317,6 +317,7 @@ object L3
 		println("Testes para Fn(s,t,e)")
 		println("========================================\n")
 		interpretador.testaTipos((Fn("x",Boleano(),Skip())),gamma)
+		interpretador.testaTipos((Fn("i",Inteiro(),X("i"))),gamma)
 		interpretador.testaTipos((Fn("x",Inteiro(),X("k"))),gamma)
 
 		println("\n========================================")
