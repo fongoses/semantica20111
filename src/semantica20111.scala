@@ -76,16 +76,16 @@ class L3Interpreter {
 		}
 
 		//If then else 
-		case If (e1, e2, e3) => (typecheck(e1,gamma)) match
+		case If (e1, e2, e3) => (typecheck(e1,gamma), typecheck(e2,gamma), typecheck(e3,gamma)) match
 		{
-		  case (Some(Boleano())) => 
-		    val returnValue : Option[Tipo] = typecheck(e2,gamma)
-		    	if(typecheck(e3,gamma)==returnValue)
-		    		returnValue
-				else
-                    println("Erro: typecheck | If (e1:Booleano(), e2, e3) => e2 e e3 nao sao do mesmo tipo")
+            case (Some(Boleano()), Some(te1: Tipo), Some(te2: Tipo)) => 
+                if (te1 == te2) { // e1 eh Boleano() entao deve-se verificar se Tipo(e1) = Tipo(e2)
+                    Some(te1)				
+                } else {
+                    println("Erro: typecheck | If (e1:Boleano(), e2, e3) => e2 e e3 nao sao do mesmo tipo")
                     None					
-		  case _ => 	
+                }
+            case _ =>
                 println("Erro: typecheck | If (e1, e2, e3) => e1 nao eh do tipo booleano")
                 None
 		}
@@ -100,18 +100,19 @@ class L3Interpreter {
 		}
 		
 		//Atribuicao
-		case Asg (e1, e2) => (typecheck(e1,gamma)) match
-		{
-			case (Some(Referencia(t: Tipo))) => 
-				if(Some(t) == typecheck(e2,gamma))
-					Some(Unidade())
-				else
+		case Asg (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
+        {
+            case (Some(Referencia(te1: Tipo)), Some(te2: Tipo)) =>
+                if (te1 == te2) { // Verifica se o Tref e T são do mesmo tipo
+                    Some(Unidade())
+                } else {
 					println("Erro: typecheck | Asg(e1:Ref(), e2) => o tipo referenciado por e1 nao eh do tipo de e2 ")
                     None
-			case _ => 
+                }
+            case _ =>
                 println("Erro: typecheck | Asg (e1, e2) => e1 nao eh do tipo Referencia(t)")
                 None
-		}
+        }
 
 		//Deref
 		case Deref (e) => (typecheck(e,gamma)) match
@@ -160,7 +161,6 @@ class L3Interpreter {
 
                     Fonte: http://www.scala-lang.org/docu/files/ScalaByExample.pdf página 64
                 */
-                //val add_gamma = (s, t) :: gamma // Adiciona s, t ao ambiente gamma
                 Some(Funcao(t, tr))
             case _ =>
                 println("Erro: typecheck | Fn (s, t, e)")
@@ -183,14 +183,6 @@ class L3Interpreter {
         }
         
         // Identificador
-		/* 
-            .find: retorna uma instancia contendo o primeiro elemento encontrado que satisfaça a propriedade ou nenhum em caso contrário
-            Fonte: http://www.codecommit.com/blog/scala/scala-collections-for-the-easily-bored-part-3
-        */
-        //////////////////////////////////
-        // ATENCAO: Achar um substitutivo
-        // Coloquei aqui para podermos testar
-        //////////////////////////////////
         case X (s: String) => (gamma.find(x => x._1 == s)) match 
         {
             case Some((s, t)) => Some(t)	// Se for encontrado um elemento da lista que satisfaça "s" retorna (s, tipo) então retorna tipo associado a "s"
@@ -203,7 +195,6 @@ class L3Interpreter {
 		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, (s, t) :: gamma)) match { // Adiciona s, t ao ambiente gamma de e2
             case (Some(t1: Tipo), Some(te2: Tipo)) =>
                 if (t1 == t) { // O tipo de e1 deve ser igual a t
-                    //val add_gamma = (s, t) :: gamma  
                     Some(te2) // Deve retornar o tipo de e2
                 } else {
                     println("Erro: typecheck | Let (s, t, e1: Tipo(), e2) => e1 nao eh do mesmo tipo de t")
@@ -260,14 +251,16 @@ object L3
 		println("\n========================================")
 		println("Testes para Meq (e1, e2)")
 		println("========================================\n")
-		interpretador.testaTipos((Sum(N(10),Sum(N(80),N(5)))),gamma)
-		interpretador.testaTipos((Sum(N(10),Sum(N(15),B(true)))),gamma)
+		interpretador.testaTipos((Meq(N(10),Sum(N(80),N(5)))),gamma)
+		interpretador.testaTipos((Meq(N(10),Sum(N(15),B(true)))),gamma)
+		interpretador.testaTipos((Meq(N(10),Sum(N(15),N(1)))),gamma)
 
 		println("\n========================================")
 		println("Testes para If (e1, e2, e3)")
 		println("========================================\n")
-		interpretador.testaTipos((If(B(true),N(10),Sum(N(15),N(20)))),gamma)
+		interpretador.testaTipos(If(B(true),N(10),Sum(N(15),N(20))),gamma)
 		interpretador.testaTipos(If(B(false),N(10),B(true)),gamma)
+		interpretador.testaTipos(If(B(false),Skip(),W(B(true),Skip())),gamma)
 		
 		println("\n========================================")
 		println("Testes para Asg(e1, e2)")
@@ -337,6 +330,7 @@ object L3
 		println("========================================\n")
 		interpretador.testaTipos(Let("k",Boleano(),B(true),Let("u",Inteiro(),N(20),W(B(true),Skip()))),gamma)
 		interpretador.testaTipos(Let("u",Boleano(),B(true),Let("v",Inteiro(),N(20),X("v"))),gamma)
+		interpretador.testaTipos(Let("u",Boleano(),B(true),Let("v",Inteiro(),N(20),X("u"))),gamma)
 			
 	}
 }
