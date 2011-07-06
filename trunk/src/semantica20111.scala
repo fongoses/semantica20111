@@ -114,7 +114,7 @@ class L3Interpreter {
 			case _ => 	None				
 		}
 		
-        // Twhile
+        // While
 		case W (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
         {
             case (Some(Boleano()), Some(Unidade())) => Some(Unidade())
@@ -149,7 +149,7 @@ class L3Interpreter {
                 None
         }
         
-        // Tapp
+        // Aplica��o
 		case App (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
         {
             case (Some(Funcao(tp: Tipo, tr: Tipo)), Some(te2: Tipo)) => 
@@ -164,13 +164,13 @@ class L3Interpreter {
                 None
         }
         
-        // Tvar
+        // Identificador
 		/* 
             .find: retorna uma instancia contendo o primeiro elemento encontrado que satisfaça a propriedade ou nenhum em caso contrário
             Fonte: http://www.codecommit.com/blog/scala/scala-collections-for-the-easily-bored-part-3
         */
         //////////////////////////////////
-        // ATENÇÃO: Achar um substitutivo
+        // ATENCAO: Achar um substitutivo
         // Coloquei aqui para podermos testar
         //////////////////////////////////
         case X (s: String) => (gamma.find(x => x._1 == s)) match 
@@ -181,7 +181,7 @@ class L3Interpreter {
                 None
         }
         
-        // Tlet
+        // Let
 		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match {
             case (Some(t1: Tipo), Some(te2: Tipo)) =>
                 if (t1 == t) { // O tipo de e1 deve ser igual a t
@@ -282,11 +282,11 @@ object L3
 	{
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Memória (sigma) e Ambiente (gamma)
+        // Memoria (sigma) e Ambiente (gamma)
         ////////////////////////////////////////////////////////////////////////////////
 		//val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
-        println("Memória e Ambiente prontos.")
+        println("Memoria e Ambiente prontos.")
         ////////////////////////////////////////////////////////////////////////////////
 
 		
@@ -299,7 +299,7 @@ object L3
 
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Fazendo as Verificações
+        // Fazendo as Verificacoes
         ////////////////////////////////////////////////////////////////////////////////
 		
 		println("========================================")
@@ -363,6 +363,13 @@ object L3
 		interpretador.testaTipos((X("x")),gamma)
 		interpretador.testaTipos((X("y")),gamma)
 		interpretador.testaTipos((X("z")),gamma)
+
+		println("========================================")
+		println("Testes para Fn(s,t,e)")
+		println("========================================")
+		interpretador.testaTipos((Fn("x",Boleano(),Skip())),gamma)
+		interpretador.testaTipos((Fn("x",Inteiro(),X("k"))),gamma)
+
 
 
 
