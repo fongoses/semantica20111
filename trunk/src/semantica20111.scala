@@ -1,4 +1,6 @@
-
+////////////////////////////////////////////////////////////////////////////////
+// Tipos de L3, conforme a especificacao
+////////////////////////////////////////////////////////////////////////////////
 abstract class Tipo
 	case class Inteiro() extends Tipo
 	case class Boleano() extends Tipo
@@ -6,28 +8,28 @@ abstract class Tipo
 	case class Funcao(t1: Tipo, t2: Tipo) extends Tipo
 	case class Referencia(t: Tipo) extends Tipo
 
+////////////////////////////////////////////////////////////////////////////////
+// Sintaxe das Expressoes
+////////////////////////////////////////////////////////////////////////////////
 abstract class Expr
-	case class N (n:Int) extends Expr //Inteiro
-	case class B (b:Boolean) extends Expr //Booleano
-	case class Sum (e1: Expr, e2: Expr) extends Expr //Soma
-	case class Meq (e1: Expr, e2: Expr) extends Expr //Maior ou Igual
-	case class If (e1: Expr, e2: Expr, e3: Expr) extends Expr //If
-	case class Asg (e1: Expr, e2: Expr) extends Expr //Atribuicao (ASG?????)
-	case class Deref (e: Expr) extends Expr //Deref
-	case class Ref (e:Expr) extends Expr //Ref
-	case class Skip() extends Expr //Skip
-	case class Seq (e1: Expr, e2: Expr) extends Expr //Sequencia
-	case class W (e1: Expr, e2: Expr) extends Expr //While
-	case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
-	case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
-	case class X (s:String) extends Expr //Identificadores
-	case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
-	
-
+	case class N (n:Int) extends Expr // Inteiro (n)
+	case class B (b:Boolean) extends Expr // Booleano (b)
+	case class Sum (e1: Expr, e2: Expr) extends Expr // Soma (e1+e2)
+	case class Meq (e1: Expr, e2: Expr) extends Expr // Maior ou Igual (e1>=e2)
+	case class If (e1: Expr, e2: Expr, e3: Expr) extends Expr // If (if e1 then e2 else e3)
+	case class Asg (e1: Expr, e2: Expr) extends Expr // Atribuicao (e1:=e2)
+	case class Deref (e: Expr) extends Expr // Deref (!e)
+	case class Ref (e:Expr) extends Expr // Ref (ref e)
+	case class Skip() extends Expr // Skip (skip)
+	case class Seq (e1: Expr, e2: Expr) extends Expr // Sequencia (e1;e2)
+	case class W (e1: Expr, e2: Expr) extends Expr // While (while e1 do e2)
+	case class Fn (s:String, t: Tipo, e: Expr) extends Expr // Funcoes (fn x:T=>e)
+	case class App (e1: Expr, e2: Expr) extends Expr // Aplicacao (e1 e2)
+	case class X (s: String) extends Expr // Identificadores (x)
+	case class Let (s: String, t: Tipo, e1: Expr, e2: Expr) extends Expr // Let (let x:T=e1 in e2 end)
 	
 	
 class L3Interpreter {
-  
   
     def testaTipos(e:Expr, gamma: List[(String,Tipo)])
     {
@@ -41,7 +43,9 @@ class L3Interpreter {
             
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
 	// Verificador de Tipos
+    ////////////////////////////////////////////////////////////////////////////////
 	def typecheck(e:Expr, gamma: List[(String,Tipo)]) : Option[Tipo] = e match 
 	{
 		//Inteiros
@@ -119,11 +123,12 @@ class L3Interpreter {
                     println("Erro: typecheck | W (e1, e2)")
                     None
                 } else {
-                    println("Erro: typecheck | W (Booelano(), e2)")
+                    println("Erro: typecheck | W (Boleano(), e2)")
                     None
                 }
         }
-		      // Funcoes
+		
+		// Funcoes
 		case Fn (s:String, t: Tipo, e) => (typecheck(e, gamma)) match
         {
             case Some(tr: Tipo) =>
@@ -144,7 +149,7 @@ class L3Interpreter {
                 None
         }
         
-        // Aplicacao
+        // Tapp
 		case App (e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match
         {
             case (Some(Funcao(tp: Tipo, tr: Tipo)), Some(te2: Tipo)) => 
@@ -159,7 +164,7 @@ class L3Interpreter {
                 None
         }
         
-        // Identificadores
+        // Tvar
 		/* 
             .find: retorna uma instancia contendo o primeiro elemento encontrado que satisfaça a propriedade ou nenhum em caso contrário
             Fonte: http://www.codecommit.com/blog/scala/scala-collections-for-the-easily-bored-part-3
@@ -176,7 +181,7 @@ class L3Interpreter {
                 None
         }
         
-        // Let
+        // Tlet
 		case Let (s: String, t: Tipo, e1, e2) => (typecheck(e1, gamma), typecheck(e2, gamma)) match {
             case (Some(t1: Tipo), Some(te2: Tipo)) =>
                 if (t1 == t) { // O tipo de e1 deve ser igual a t
@@ -207,7 +212,10 @@ class L3Interpreter {
 	
 /*		
 		
-	// Semantica Operacional
+	////////////////////////////////////////////////////////////////////////////////
+    // Semantica Operacional
+    ////////////////////////////////////////////////////////////////////////////////
+
 	def isvalue(e:Expr) : Boolean = e match 
 	{
 		case N(_) => true
@@ -262,33 +270,37 @@ class L3Interpreter {
 	}
 */	
 }	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 
-//Main, criada pelo professor para que possamos testar nosso programa
+
+////////////////////////////////////////////////////////////////////////////////
+// Main, criada pelo professor para que possamos testar nosso programa
+////////////////////////////////////////////////////////////////////////////////
 object L3 
 {
 	def main (args: Array[String]) 
 	{
 
-//		val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
+        ////////////////////////////////////////////////////////////////////////////////
+        // Memória (sigma) e Ambiente (gamma)
+        ////////////////////////////////////////////////////////////////////////////////
+		//val sigma: List[(String,Int)] = List(("l1",5), ("l2",7)) //"Mapa" de Memoria
 		val gamma: List[(String,Tipo)] = List(("x",Inteiro()), ("y", Inteiro())) //"Mapa" de Identificadores
+        println("Memória e Ambiente prontos.")
+        ////////////////////////////////////////////////////////////////////////////////
+
+		
+        ////////////////////////////////////////////////////////////////////////////////
+        // Carrega o interpretador
+        ////////////////////////////////////////////////////////////////////////////////
 		val interpretador = new L3Interpreter()
+        println("Interpretador Carregado.\n\n")
+        ////////////////////////////////////////////////////////////////////////////////
 
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // Fazendo as Verificações
+        ////////////////////////////////////////////////////////////////////////////////
 		
 		println("========================================")
 		println("Testes para Sum (e1, e2)")
@@ -343,7 +355,8 @@ object L3
 		interpretador.testaTipos((W(B(true), N(0))),gamma)
 		interpretador.testaTipos((W(B(false), Sum(N(7),N(9)))),gamma)	
 		interpretador.testaTipos((W(N(27), B(false))),gamma)
-		
+		interpretador.testaTipos((W(B(true),Skip())),gamma)
+
 		println("========================================")
 		println("Testes para X(x)")
 		println("========================================")
@@ -354,10 +367,10 @@ object L3
 
 
 
-
-
+	//case class W (e1: Expr, e2: Expr) extends Expr //While
 	//case class Fn (s:String, t: Tipo, e: Expr) extends Expr //Funcoes
 	//case class App (e1: Expr, e2: Expr) extends Expr //Aplicacao
+	//case class X (s:String) extends Expr //Identificadores
 	//case class Let (s:String, t: Tipo, e1: Expr, e2: Expr) extends Expr //Let
 	    
 
