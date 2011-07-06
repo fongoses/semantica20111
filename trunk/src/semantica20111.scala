@@ -333,8 +333,19 @@ object L3
 		interpretador.testaTipos((Seq(Skip(), Sum(N(1), N(35)))),gamma)
 		interpretador.testaTipos((Seq(Skip(), B(true))),gamma)
 		
+		println("========================================")
+		println("Testes para W(e1, e2)")
+		println("========================================")
+		interpretador.testaTipos((W(B(true), N(0))),gamma)
+		interpretador.testaTipos((W(B(false), Sum(N(7),N(9)))),gamma)	
+		interpretador.testaTipos((W(N(27), B(false))),gamma)
 		
-
+		println("========================================")
+		println("Testes para X(x)")
+		println("========================================")
+		interpretador.testaTipos((X("x")),gamma)
+		interpretador.testaTipos((X("y")),gamma)
+		interpretador.testaTipos((X("z")),gamma)
 
 
 
